@@ -5,4 +5,4 @@ FROM phemextradebot/webweb8888
 EXPOSE 8080
 
 # Start Nginx in the foreground
-CMD ["/bin/bash /startweb"]
+CMD ["/bin/bash /start"]
