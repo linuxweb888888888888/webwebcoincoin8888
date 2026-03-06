@@ -1,31 +1,16 @@
-# Use a base image with Python
-FROM python:3.10-slim
+# Use a base image compatible with Binder
+FROM jupyter/base-notebook:latest
 
-# Create a user, as Binder does not run as root
-ARG NB_USER=jovyan
-ARG NB_UID=1000
-ENV USER=${NB_USER}
-ENV HOME=/home/${NB_USER}
+# Switch to root to install nginx and manage files
+USER root
+RUN apt-get update && apt-get install -y nginx && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN adduser --disabled-password \
-    --gecos "Default user" \
-    --uid ${NB_UID} \
-    ${NB_USER}
+# Copy your website files
+COPY ./index.html /var/www/html/index.html
 
-# Set working directory
-WORKDIR ${HOME}
+# Expose port 8080 (Binder uses this instead of 80)
+EXPOSE 8080
 
-# Copy your local web files to the container
-COPY . ${HOME}
-
-# Ensure the user owns the files
-RUN chown -R ${NB_UID} ${HOME}
-
-# Switch to the non-root user
-USER ${NB_USER}
-
-# Expose the port (e.g., 8000)
-EXPOSE 8000
-
-# Command to run the web server
-CMD ["python3", "-m", "http.server", "8000"]
+# Start Nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]
